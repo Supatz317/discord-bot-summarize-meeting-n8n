@@ -1,0 +1,12 @@
+{
+  "name": "hackathon-n8n",
+  "module": "index.js",
+  "dependencies": {
+    "discord.js": "^14.19.3"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "eslint": "^9.27.0"
+  },
+  "type": "module"
+}
