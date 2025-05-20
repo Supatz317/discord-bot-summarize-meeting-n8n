@@ -1,12 +1,21 @@
 {
   "name": "hackathon-n8n",
   "module": "index.js",
-  "dependencies": {
-    "discord.js": "^14.19.3"
+  "type": "commonjs",
+  "scripts": {
+    "build": "bun build src/index.ts --outdir=dist --minify --target=browser",
+    "dev": "nodemon --watch src --ext ts --exec bun run build && bun run start"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "eslint": "^9.27.0"
+    "@types/bun": "latest"
   },
-  "type": "module"
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "discord.js": "^14.19.3",
+    "dotenv": "^16.5.0",
+    "hackathon-n8n": "file:",
+    "nodemon": "^3.1.10"
+  }
 }
