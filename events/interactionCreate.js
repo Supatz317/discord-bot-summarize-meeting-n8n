@@ -23,8 +23,5 @@ module.exports = {
 			}
 		}
 
-		// console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
-		console.log(interaction.commandName + " : " + interaction.guild.name + " : " + interaction.channel.name + " : " + interaction.user.username);
-
 	},
 };
