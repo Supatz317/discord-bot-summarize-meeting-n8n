@@ -4,7 +4,8 @@
   "type": "commonjs",
   "scripts": {
     "build": "bun build src/index.ts --outdir=dist --minify --target=browser",
-    "dev": "nodemon --watch src --ext ts --exec bun run build && bun run start"
+    "dev": "nodemon --watch src --ext ts --exec bun run build && bun run start",
+    "start": "nodemon --exec \"node index.js\""
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -13,9 +14,12 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "axios": "^1.9.0",
     "discord.js": "^14.19.3",
     "dotenv": "^16.5.0",
     "hackathon-n8n": "file:",
-    "nodemon": "^3.1.10"
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.10",
+    "pino": "^9.7.0"
   }
 }
