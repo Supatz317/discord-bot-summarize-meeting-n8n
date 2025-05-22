@@ -5,7 +5,18 @@ const { Client, Collection, GatewayIntentBits } = require('discord.js');
 require('dotenv').config();
 
 const client = new Client({ intents: [
-	GatewayIntentBits.Guilds,GatewayIntentBits.GuildMembers] }); 
+	GatewayIntentBits.Guilds,
+	GatewayIntentBits.GuildMembers,
+	GatewayIntentBits.GuildMessages,
+	GatewayIntentBits.MessageContent
+
+] }); 
+
+if (process.env.N8N_WEBHOOK.includes('test')) {
+	console.log('TESTING MODE ENABLED');
+} else {
+	console.log('PRODUCTION MODE ENABLED');
+}
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
@@ -34,8 +45,10 @@ for (const file of eventFiles) {
 	const filePath = path.join(eventsPath, file);
 	const event = require(filePath);
 	if (event.once) {
+		console.log(`[INFO] Loaded event: ${event.name} (once)`);
 		client.once(event.name, (...args) => event.execute(...args));
 	} else {
+		console.log(`[INFO] Loaded event: ${event.name}`);
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }
