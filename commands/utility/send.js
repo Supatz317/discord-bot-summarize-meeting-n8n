@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 
 // load env variables
 require('dotenv').config();
@@ -39,7 +39,7 @@ module.exports = {
 
         try {
             // Defer the reply while we process the request
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
             // Send the data to n8n
             const response = await fetch(process.env.N8N_WEBHOOK, {
