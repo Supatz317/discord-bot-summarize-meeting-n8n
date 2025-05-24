@@ -5,8 +5,33 @@ const logger = require('pino')();
 
 dotenv.config();
 
-// mock channel ID
-const channelID = ['1373865366492545085']
+// tempolary ไว้เช็คห้องที่ register ไว้
+// read channel.json() and get id
+const fs = require('fs');
+const path = require('path');
+const channelPath = path.join(__dirname, 'channel.json');
+// console.log(`Reading channel.json from ${channelPath}`);
+let channelData;
+let channelID = [];
+try {
+    channelData = JSON.parse(fs.readFileSync(channelPath, 'utf8'));
+    for (const channel of channelData) {
+        if (!channel.id) {
+            console.error(`Channel ID not found in channel.json`);
+            process.exit(1);
+        }
+        channelID.push(channel.id);
+    }
+}
+
+catch (err) {
+    console.error(`Error reading channel.json: ${err}`);
+    process.exit(1);
+}
+console.log(`Loaded channel IDs: ${channelID.join(', ')}`);
+// console.log(`channel.json: ${JSON.stringify(channelData)}`);
+
+// const channelID = ['1373865366492545085']
 
 async function sendToN8n(data) {
   try {
@@ -22,7 +47,7 @@ async function sendToN8n(data) {
 module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
-        if (message.author.bot) return; 
+        if (message.author.bot) return;
         if (!channelID.includes(message.channel.id)) return;
 
         logger.info(`Processing message from ${message.author.username}: ${message.content.substring(0, 50)}...`);
@@ -51,7 +76,7 @@ module.exports = {
                 name: message.guild.name
             } : null,
             timestamp: message.createdAt.toISOString(),
-            edited: message.editedAt ? message.editedAt.toISOString() : null,
+            edited: message.editedAt ? message.editedAt : null,
             attachments: message.attachments.map(a => ({
                 filename: a.name,
                 url: a.url,
@@ -67,9 +92,10 @@ module.exports = {
         };
 
         // Send to n8n
-        if (!await sendToN8n(messageData)) {
+        if (!await sendToN8n(messageData)) { 
             logger.warn(`Failed to process message ${message.id}`);
         }
+
 
     }
 };
