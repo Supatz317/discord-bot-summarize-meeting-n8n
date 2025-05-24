@@ -10,16 +10,16 @@ module.exports = {
                 .setDescription('Your team name')
                 .setRequired(true)
         )
-        .addStringOption(option =>
-            option.setName('choice') 
-                .setDescription('เลื่อนเพื่อเลือกประเภทการสรุปงาน')
-                .setRequired(true)
-                .addChoices( 
-                    { name: '1. สรุปงานแบบทีมทั่วไป เหมาะสำหรับทีมที่ทำงานโปรเจกต์เดียว', value: 'single' },
-                    { name: '2. สรุปงานแบบ Multi-Project เหมาะสำหรับทีมที่ทำงานหลายโปรเจกต์พร้อมกัน', value: 'multi' },
-                    { name: '3. สรุปงาน เน้น Blockers เหมาะสำหรับทีมที่พบปัญหาบ่อยและต้องการความช่วยเหลือด่วน', value: 'blocker' },
-                )
-        ), 
+        // .addStringOption(option =>
+        //     option.setName('choice') 
+        //         .setDescription('เลื่อนเพื่อเลือกประเภทการสรุปงาน')
+        //         .setRequired(true)
+        //         .addChoices( 
+        //             { name: '1. สรุปงานแบบทีมทั่วไป เหมาะสำหรับทีมที่ทำงานโปรเจกต์เดียว', value: 'single' },
+        //             { name: '2. สรุปงานแบบ Multi-Project เหมาะสำหรับทีมที่ทำงานหลายโปรเจกต์พร้อมกัน', value: 'multi' },
+        //             { name: '3. สรุปงาน เน้น Blockers เหมาะสำหรับทีมที่พบปัญหาบ่อยและต้องการความช่วยเหลือด่วน', value: 'blocker' },
+        //         )
+        // ), 
     async execute(interaction) {
         const teamName = interaction.options.getString('teamname');
         const choice = interaction.options.getString('choice');
