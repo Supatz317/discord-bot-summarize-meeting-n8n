@@ -1,0 +1,44 @@
+[
+  {
+    "id": "1373865366492545085",
+    "type": 0,
+    "last_message_id": "1375538602708172962",
+    "flags": 0,
+    "guild_id": "1372121335077277776",
+    "name": "back-office",
+    "parent_id": "1373865329238741022",
+    "rate_limit_per_user": 0,
+    "topic": null,
+    "position": 5,
+    "permission_overwrites": [],
+    "nsfw": false
+  },
+  {
+    "id": "1374935099044401223",
+    "type": 0,
+    "last_message_id": "1375538574610534473",
+    "flags": 0,
+    "guild_id": "1372121335077277776",
+    "name": "conversation-agent",
+    "parent_id": "1373865329238741022",
+    "rate_limit_per_user": 0,
+    "topic": null,
+    "position": 6,
+    "permission_overwrites": [],
+    "nsfw": false
+  },
+  {
+    "id": "1375308864735412234",
+    "type": 0,
+    "last_message_id": "1375538231365599272",
+    "flags": 0,
+    "guild_id": "1372121335077277776",
+    "name": "dev",
+    "parent_id": "1373865329238741022",
+    "rate_limit_per_user": 0,
+    "topic": null,
+    "position": 8,
+    "permission_overwrites": [],
+    "nsfw": false
+  }
+]
