@@ -30,7 +30,7 @@ for (const folder of commandFolders) {
 		const command = require(filePath);
 		if ('data' in command && 'execute' in command) {
 			client.commands.set(command.data.name, command);
-			console.log(`[INFO] Loaded command: ${command.data.name}`);
+			// console.log(`[INFO] Loaded command: ${command.data.name}`);
 		} else {
 			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 		}
@@ -45,7 +45,7 @@ for (const file of eventFiles) {
 	const filePath = path.join(eventsPath, file);
 	const event = require(filePath);
 	if (event.once) {
-		console.log(`[INFO] Loaded event: ${event.name} (once)`);
+		// console.log(`[INFO] Loaded event: ${event.name} (once)`);
 		client.once(event.name, (...args) => event.execute(...args));
 	} else {
 		console.log(`[INFO] Loaded event: ${event.name}`);
