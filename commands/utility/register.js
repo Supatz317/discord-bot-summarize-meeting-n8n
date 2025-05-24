@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
+const logger = require('pino')();
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,18 +11,20 @@ module.exports = {
                 .setRequired(true)
         )
         .addStringOption(option =>
-            option.setName('choice')
+            option.setName('choice') 
                 .setDescription('เลื่อนเพื่อเลือกประเภทการสรุปงาน')
                 .setRequired(true)
-                .addChoices(
+                .addChoices( 
                     { name: '1. สรุปงานแบบทีมทั่วไป เหมาะสำหรับทีมที่ทำงานโปรเจกต์เดียว', value: 'single' },
                     { name: '2. สรุปงานแบบ Multi-Project เหมาะสำหรับทีมที่ทำงานหลายโปรเจกต์พร้อมกัน', value: 'multi' },
                     { name: '3. สรุปงาน เน้น Blockers เหมาะสำหรับทีมที่พบปัญหาบ่อยและต้องการความช่วยเหลือด่วน', value: 'blocker' },
                 )
-        ),
+        ), 
     async execute(interaction) {
         const teamName = interaction.options.getString('teamname');
         const choice = interaction.options.getString('choice');
+
+        logger.info(`Register command executed by ${interaction.user.username} (${interaction.user.id}) in channel ${interaction.channel.name} (${interaction.channel.id}) with team name: ${teamName} and choice: ${choice}`);
 
         const channel = interaction.channel;
         const channelName = channel.name;
@@ -71,6 +74,25 @@ module.exports = {
             console.error('Error:', error);
             await interaction.editReply('There was an error processing your request.');
         }
+
+        // add data to ./events/channel.json
+        const fs = require('fs');
+        const path = require('path');
+        const channelDataPath = path.join(__dirname, '../../events/channel.json');
+        console.log(`Updating channel data at ${channelDataPath}`);
+        const channelData = JSON.parse(fs.readFileSync(channelDataPath, 'utf8'));
+        channelData[channelId] = {
+            teamName: teamName,
+            choice: choice,
+            userId: interaction.user.id,
+            username: interaction.user.username,
+            guildId: interaction.guild.id,
+            guildName: interaction.guild.name
+        };
+
+        fs.writeFileSync(channelDataPath, JSON.stringify(channelData, null, 2), 'utf8');
+        console.log(`Channel data updated for channel ${channelId}: ${JSON.stringify(channelData[channelId])}`);
+
 
     },
 };
