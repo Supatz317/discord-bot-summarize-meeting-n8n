@@ -10,6 +10,11 @@ module.exports = {
                 .setDescription('Your team name')
                 .setRequired(true)
         )
+        .addStringOption(option =>
+            option.setName('description')
+                .setDescription('tell us about your team, for help us understand your team better')
+                .setRequired(false)
+        ),
         // .addStringOption(option =>
         //     option.setName('choice') 
         //         .setDescription('เลื่อนเพื่อเลือกประเภทการสรุปงาน')
@@ -22,12 +27,10 @@ module.exports = {
         // ), 
     async execute(interaction) {
         const teamName = interaction.options.getString('teamname');
-        const choice = interaction.options.getString('choice');
+        const description = interaction.options.getString('description') || 'No description provided'; // Default if no description is given
 
-        logger.info(`Register command executed by ${interaction.user.username} (${interaction.user.id}) in channel ${interaction.channel.name} (${interaction.channel.id}) with team name: ${teamName} and choice: ${choice}`);
 
         const channel = interaction.channel;
-        const channelName = channel.name;
         const channelId = channel.id;
 
         const payload = {
@@ -36,7 +39,7 @@ module.exports = {
             data: {
                 id: channelId,
                 teamName: teamName,
-                choice: choice,
+                description: description,
                 user: {
                     id: interaction.user.id,
                     username: interaction.user.username,
@@ -63,16 +66,21 @@ module.exports = {
             if (response.ok) {
                 // await interaction.editReply('Data successfully sent to n8n!');
                 await interaction.editReply({
-                    content: `✅ **Registration Complete!**\n- Team: **${teamName}**\n- Choice: **${choice}**`,
+                    content: `✅ **Registration Complete!**\n- Team: **${teamName}**\n- description: **${description}**`,
                     flags: MessageFlags.Ephemeral
                 });
             } else {
                 console.error('Failed to send data to n8n:', response.statusText);
-                await interaction.editReply('Failed to send data to n8n.');
+                await interaction.editReply({
+                    content: 'Failed to send data to n8n.'
+                    , flags: MessageFlags.Ephemeral});
             }
         } catch (error) {
             console.error('Error:', error);
-            await interaction.editReply('There was an error processing your request.');
+            await interaction.editReply({
+                content: `There was an error processing your request. ${error.message}`,
+                flags: MessageFlags.Ephemeral
+            });
         }
 
         // add data to ./events/channel.json
@@ -83,7 +91,7 @@ module.exports = {
         const channelData = JSON.parse(fs.readFileSync(channelDataPath, 'utf8'));
         channelData[channelId] = {
             teamName: teamName,
-            choice: choice,
+            description: description,
             userId: interaction.user.id,
             username: interaction.user.username,
             guildId: interaction.guild.id,

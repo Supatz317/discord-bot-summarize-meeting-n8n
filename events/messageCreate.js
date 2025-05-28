@@ -1,37 +1,24 @@
+// import { getCachedData } from '../database/cache';
+const { getChannel, getCache } = require('../database/db');
+
+// import { sql } from '../database/db';
+const { sql } = require('../database/db');
+
 const { Client, GatewayIntentBits, Events } = require('discord.js');
 const axios = require('axios');
 const dotenv = require('dotenv');
 const logger = require('pino')();
 
-dotenv.config();
 
-// tempolary ไว้เช็คห้องที่ register ไว้
-// read channel.json() and get id
-const fs = require('fs');
-const path = require('path');
-const channelPath = path.join(__dirname, 'channel.json');
-// console.log(`Reading channel.json from ${channelPath}`);
-let channelData;
-let channelID = [];
-try {
-    channelData = JSON.parse(fs.readFileSync(channelPath, 'utf8'));
-    for (const channel of channelData) {
-        if (!channel.id) {
-            console.error(`Channel ID not found in channel.json`);
-            process.exit(1);
-        }
-        channelID.push(channel.id);
-    }
+dotenv.config(); 
+
+
+function channelExists(list, channelId) {
+    return list.some(c => c.channel_id === channelId);
 }
 
-catch (err) {
-    console.error(`Error reading channel.json: ${err}`);
-    process.exit(1);
-}
-console.log(`Loaded channel IDs: ${channelID.join(', ')}`);
-// console.log(`channel.json: ${JSON.stringify(channelData)}`);
 
-// const channelID = ['1373865366492545085']
+
 
 async function sendToN8n(data) {
   try {
@@ -44,11 +31,25 @@ async function sendToN8n(data) {
   }
 }
 
+
 module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
+        // Load channel list from database
+        const channelList = await getCache('channels') ;
+        // console.log(`2.Loaded ${channelList.length} registered channels from database.`);
+        
+        if (!channelList || channelList.length === 0) {
+            console.log('channelList is empty or not loaded.');
+            return;
+        }
+
         if (message.author.bot) return;
-        if (!channelID.includes(message.channel.id)) return;
+        
+        if (!channelExists(channelList, message.channel.id)) {
+            console.log(`Channel ${message.channel.id} is not registered. Skipping message processing.`);
+            return;
+        }
 
         logger.info(`Processing message from ${message.author.username}: ${message.content.substring(0, 50)}...`);
 
@@ -75,7 +76,7 @@ module.exports = {
                 id: message.guild.id,
                 name: message.guild.name
             } : null,
-            timestamp: message.createdAt.toISOString(),
+            timestamp: message.createdAt,
             edited: message.editedAt ? message.editedAt : null,
             attachments: message.attachments.map(a => ({
                 filename: a.name,

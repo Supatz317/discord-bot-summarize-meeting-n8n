@@ -48,7 +48,10 @@ module.exports = {
             }
         } catch (error) {
             logger.error(`Error: ${error.message}` );
-            await interaction.editReply(`There was an error processing your request. ${error.message}`);
+            await interaction.editReply({
+                content: `There was an error processing your request. ${error.message}`,
+                flags: MessageFlags.Ephemeral
+            });
         }
     },
 };

@@ -30,18 +30,35 @@ module.exports = {
                 body: JSON.stringify(payload)
             });
 
+            console.log(`status: ${response.status} ${response.statusText}`);
+
             if (response.ok) {
                 const data = await response.json();
                 // Check if the response contains the expected data
-                const result = data.result;
+                console.log(`Response from n8n: ${JSON.stringify(data)}`);
+                if (!data || !Array.isArray(data) || data.length === 0) {
+                    await interaction.editReply('No team information found.');
+                    return;
+                }
+                const result = data[0];
 
-                await interaction.editReply(result.replace(/\\n/g, '\n').replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'));
+                // await interaction.editReply(result.replace(/\\n/g, '\n').replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'));
+                await interaction.editReply({
+                    content: `✅ **Registration Complete!**\n- Team: **${result.team_name}**\n- description: **${result.description}**`,
+                    flags: MessageFlags.Ephemeral
+                });
             } else {
-                await interaction.editReply('Failed to get team information from n8n.');
+                await interaction.editReply({
+                    content: 'Failed to get team information from n8n.',
+                    flags: MessageFlags.Ephemeral
+                });
             }
         } catch (error) {
             console.error(`Error: ${error.message}`);
-            await interaction.editReply(`There was an error processing your request. ${error.message}`);
+            await interaction.editReply({
+                content : `There was an error processing your request. ${error.message}`,
+                flags: MessageFlags.Ephemeral
+            });
         }
     },
 };
