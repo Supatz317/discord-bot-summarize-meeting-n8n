@@ -16,7 +16,7 @@ module.exports = {
         const message = interaction.options.getString('message');
         const channel = interaction.client.channels.cache.get(interaction.channelId);
         if (!channel) {
-            return interaction.reply({ content: 'Channel not found', ephemeral: true });
+            return interaction.reply({ content: 'Channel not found', flags: MessageFlags.Ephemeral });
         }
         // await channel.send(message);
         // await interaction.reply({ content: 'Message sent', ephemeral: true });
@@ -57,7 +57,10 @@ module.exports = {
             }
         } catch (error) {
             console.error('Error:', error);
-            await interaction.editReply('There was an error processing your request.');
+            await interaction.editReply({
+                content: `There was an error processing your request. ${error.message}`,
+                flags: MessageFlags.Ephemeral
+            });
         }
     }
 };
