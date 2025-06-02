@@ -1,3 +1,5 @@
+const { getChannel, setCache } = require('../../database/db');
+
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const logger = require('pino')();
 
@@ -29,6 +31,8 @@ module.exports = {
         const teamName = interaction.options.getString('teamname');
         const description = interaction.options.getString('description') || 'No description provided'; // Default if no description is given
 
+        const channels = getChannel(); // or await queryChannel() if that's your function
+        setCache('channels', channels);
 
         const channel = interaction.channel;
         const channelId = channel.id;
@@ -53,15 +57,17 @@ module.exports = {
 
         try {
             await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+            console.log("1");
             // Send the data to n8n
             const response = await fetch(process.env.N8N_WEBHOOK, {
-                method: 'POST',
+                method: 'POST', 
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(payload)
             });
+            console.log(`status: ${response.status} ${response.statusText}`);
+            console.log("2");
 
             if (response.ok) {
                 // await interaction.editReply('Data successfully sent to n8n!');
@@ -72,7 +78,7 @@ module.exports = {
             } else {
                 console.error('Failed to send data to n8n:', response.statusText);
                 await interaction.editReply({
-                    content: 'Failed to send data to n8n.'
+                    content: '[register] Failed to send data to n8n.'
                     , flags: MessageFlags.Ephemeral});
             }
         } catch (error) {
@@ -84,22 +90,22 @@ module.exports = {
         }
 
         // add data to ./events/channel.json
-        const fs = require('fs');
-        const path = require('path');
-        const channelDataPath = path.join(__dirname, '../../events/channel.json');
-        console.log(`Updating channel data at ${channelDataPath}`);
-        const channelData = JSON.parse(fs.readFileSync(channelDataPath, 'utf8'));
-        channelData[channelId] = {
-            teamName: teamName,
-            description: description,
-            userId: interaction.user.id,
-            username: interaction.user.username,
-            guildId: interaction.guild.id,
-            guildName: interaction.guild.name
-        };
+        // const fs = require('fs');
+        // const path = require('path');
+        // const channelDataPath = path.join(__dirname, '../../events/channel.json');
+        // console.log(`Updating channel data at ${channelDataPath}`);
+        // const channelData = JSON.parse(fs.readFileSync(channelDataPath, 'utf8'));
+        // channelData[channelId] = {
+        //     teamName: teamName,
+        //     description: description,
+        //     userId: interaction.user.id,
+        //     username: interaction.user.username,
+        //     guildId: interaction.guild.id,
+        //     guildName: interaction.guild.name
+        // };
 
-        fs.writeFileSync(channelDataPath, JSON.stringify(channelData, null, 2), 'utf8');
-        console.log(`Channel data updated for channel ${channelId}: ${JSON.stringify(channelData[channelId])}`);
+        // fs.writeFileSync(channelDataPath, JSON.stringify(channelData, null, 2), 'utf8');
+        // console.log(`Channel data updated for channel ${channelId}: ${JSON.stringify(channelData[channelId])}`);
 
 
     },

@@ -23,6 +23,7 @@ module.exports = {
 
         // Send message to n8n webhook
         const payload = {
+            service: 'send',
             discordUser: {
                 id: interaction.user.id,
                 username: interaction.user.username,
@@ -51,7 +52,18 @@ module.exports = {
             });
 
             if (response.ok) {
-                await interaction.editReply('Data successfully sent to n8n!');
+                const data = await response.json();
+                console.log(2);
+                // Check if the response contains the expected data
+                // logger.info(`Response from n8n: ${JSON.stringify(data)}`);
+                const result = data.result.replace(/\\n/g, '\n').replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\')
+                console.log(result);
+
+                await interaction.editReply({
+                    content : result.substring(0, 2000) // Discord has a limit of 2000 characters per message
+                    // .replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                    ,flags: MessageFlags.Ephemeral
+                });
             } else {
                 await interaction.editReply('Failed to send data to n8n.');
             }

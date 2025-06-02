@@ -12,7 +12,7 @@ module.exports = {
     async execute(interaction) {
         
         // send message to n8n then get response send to discord
-        await interaction.deferReply();
+        await interaction.deferReply({flags: MessageFlags.Ephemeral});
         
         const payload = {
             service: 'team',
@@ -49,7 +49,7 @@ module.exports = {
                 });
             } else {
                 await interaction.editReply({
-                    content: 'Failed to get team information from n8n.',
+                    content: '[team] Failed to get team information from n8n.',
                     flags: MessageFlags.Ephemeral
                 });
             }
