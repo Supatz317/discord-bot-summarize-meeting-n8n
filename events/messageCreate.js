@@ -12,7 +12,7 @@ const logger = require('pino')();
 
 dotenv.config(); 
 
-const attendance = process.env.ATTENDANCE_DEMO;
+const attendance = [process.env.ATTENDANCE_TRAINEE_CHANNEL_ID, process.env.ATTENDANCE_EMPLOYEE_CHANNEL_ID, process.env.ATTENDANCE_DEMO];
 
 
 function channelExists(list, channelId) {
@@ -55,7 +55,7 @@ module.exports = {
         if (!message.guild) return;
         
         
-        if (message.channel.id === attendance) {
+        if (channelExists(attendance, message.channel.id)) {
             // logger.info(`Processing attendance message from ${message.author.username}: ${message.content.substring(0, 50)}...`);
             console.log(`[attendance] Processing attendance message from ${message.author.username}: ${message.content.substring(0, 50)}...`);
             // Prepare data for n8n

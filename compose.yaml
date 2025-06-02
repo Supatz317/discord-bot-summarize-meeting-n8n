@@ -18,9 +18,12 @@ services:
       GUILDID: ${GUILDID}
       N8N_WEBHOOK: ${N8N_WEBHOOK}
       DATABASE_URL: ${DATABASE_URL}
-
+      ATTENDANCE_TRAINEE_CHANNEL_ID: ${ATTENDANCE_TRAINEE_CHANNEL_ID}
+      ATTENDANCE_EMPLOYEE_CHANNEL_ID: ${ATTENDANCE_EMPLOYEE_CHANNEL_ID}
+      ATTENDANCE_DEMO: ${ATTENDANCE_DEMO}
     ports:
       - 80:80
+    restart: unless-stopped
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
